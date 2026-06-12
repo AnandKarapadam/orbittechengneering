@@ -1,7 +1,5 @@
 // src/components/Services.jsx
 import React, { useEffect, useState } from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Pagination } from "swiper/modules";
 import {
   Bolt,
   Droplets,
@@ -11,9 +9,7 @@ import {
   Building2,
 } from "lucide-react";
 
-import "swiper/css";
-import "swiper/css/pagination";
-import "../styles/services.css";
+import '../styles/services.css'
 
 const projectImages = [
   "/projects/project-1.jpg",
