@@ -271,7 +271,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     gap: 0.5rem;
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
 
   .hero-button {
