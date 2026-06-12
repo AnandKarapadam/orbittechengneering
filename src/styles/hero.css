@@ -164,7 +164,7 @@
   .hero-content {
     order: 2;
     max-width: 100%;
-    text-align: center;
+    text-align: start;
   }
 
   .hero-eyebrow {
@@ -184,7 +184,7 @@
 
   .hero-highlights {
     gap: 0.5rem;
-    justify-content: center;
+    justify-content: start;
   }
 
   .hero-highlights span {
