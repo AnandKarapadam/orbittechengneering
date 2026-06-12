@@ -237,12 +237,12 @@
   .hero-eyebrow {
     font-size: 0.62rem;
     letter-spacing: 0.09em;
-    margin-top: 10px;
+    margin-top: 3.5rem;
   }
 
   .hero h1 {
     font-size: clamp(1.85rem, 10vw, 2.65rem);
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     margin-top: 2rem;
   }
 
@@ -261,7 +261,7 @@
     flex-direction: row;
     flex-wrap: nowrap;
     gap: 0.5rem;
-    margin-top: 1.5rem;
+    margin-top: 2rem;
   }
 
   .hero-button {
