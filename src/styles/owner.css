@@ -1,0 +1,92 @@
+.owner {
+  width: 100%;
+  padding: 4rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.owner-title {
+  color: #fff;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.owner-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 2rem;
+  text-align: center;
+
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(120, 211, 255, 0.15);
+  border-radius: 16px;
+
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+}
+
+.owner-avatar {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 1rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: rgba(120, 211, 255, 0.08);
+  border: 1px solid rgba(120, 211, 255, 0.2);
+
+  color: #78d3ff;
+}
+
+.owner-card h3 {
+  color: #fff;
+  margin-bottom: 0.75rem;
+}
+
+.owner-text {
+  color: #bfd3e4;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.owner-contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.owner-link,
+.owner-phone-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+
+  width: 100%;
+  padding: 0.85rem;
+
+  text-decoration: none;
+  color: #eaf6ff;
+
+  background: rgba(120, 211, 255, 0.08);
+  border: 1px solid rgba(120, 211, 255, 0.15);
+  border-radius: 10px;
+
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.owner-phone-btn {
+  font-size: inherit;
+}
+
+.owner-link:hover,
+.owner-phone-btn:hover {
+  background: rgba(120, 211, 255, 0.15);
+  border-color: rgba(120, 211, 255, 0.3);
+}
