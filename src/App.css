@@ -4,7 +4,7 @@
 :root {
   --color-bg: #030712;
 
-  --color-bg-gradient:
+  /* --color-bg-gradient:
     radial-gradient(circle at 18% 12%, rgba(30, 64, 175, 0.28), transparent 32%),
     radial-gradient(circle at 82% 8%, rgba(12, 48, 65, 0.14), transparent 30%),
     linear-gradient(
@@ -13,8 +13,18 @@
       #07111f 38%,
       #0f1f35 72%,
       #020617 100%
-    );
-
+    ); */
+  --color-bg-gradient:
+    radial-gradient(circle at 20% 15%,
+      rgba(56, 189, 248, 0.16),
+      transparent 32%),
+    radial-gradient(circle at 80% 10%,
+      rgba(15, 23, 42, 0.3),
+      transparent 34%),
+    linear-gradient(135deg,
+      #020617 0%,
+      #07111f 45%,
+      #020617 100%);
   --color-text: #f8fafc;
   --color-muted: #b6c6d8;
   --color-primary: #ffffff;
@@ -42,6 +52,7 @@ html {
   scroll-behavior: smooth;
   overflow-x: hidden;
 }
+
 body {
   width: 100%;
   min-height: 100vh;
@@ -60,7 +71,7 @@ body {
 
 section {
   width: 100%;
-  
+
 }
 
 h1,
