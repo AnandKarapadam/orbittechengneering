@@ -1,5 +1,4 @@
-// src/components/OrbitBackground.jsx
-import React, { useMemo, useRef } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
 import "../styles/orbitbackground.css";
@@ -9,7 +8,13 @@ function FloatingParticles() {
   const mouse = useRef({ x: 0, y: 0 });
 
   const particles = useMemo(() => {
-    const count = 1400;
+    const isMobile =
+      typeof window !== "undefined" &&
+      window.matchMedia("(max-width: 768px)").matches;
+
+    // Keep desktop identical
+    const count = isMobile ? 1000 : 1400;
+
     const positions = new Float32Array(count * 3);
 
     for (let i = 0; i < count; i++) {
@@ -40,7 +45,8 @@ function FloatingParticles() {
     pointsRef.current.rotation.x = mouse.current.y * 0.08;
     pointsRef.current.rotation.z = mouse.current.x * 0.05;
 
-    const positions = pointsRef.current.geometry.attributes.position.array;
+    const positions =
+      pointsRef.current.geometry.attributes.position.array;
 
     for (let i = 0; i < positions.length; i += 3) {
       positions[i + 1] -= 0.004;
@@ -65,6 +71,7 @@ function FloatingParticles() {
           itemSize={3}
         />
       </bufferGeometry>
+
       <pointsMaterial
         size={0.025}
         color="#9fe7ff"
@@ -77,19 +84,62 @@ function FloatingParticles() {
 }
 
 export default function OrbitBackground() {
+  const [webglFailed, setWebglFailed] = useState(false);
+
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) return;
+    };
+
+    document.addEventListener(
+      "visibilitychange",
+      handleVisibility
+    );
+
+    return () => {
+      document.removeEventListener(
+        "visibilitychange",
+        handleVisibility
+      );
+    };
+  }, []);
+
   return (
     <div className="orbit-background" aria-hidden="true">
-      <Canvas
-        camera={{ position: [0, 0, 6], fov: 60 }}
-        gl={{
-          alpha: true,
-          antialias: false,
-          powerPreference: "high-performance",
-        }}
-        dpr={[1, 1.5]}
-      >
-        <FloatingParticles />
-      </Canvas>
+      {!webglFailed && (
+        <Canvas
+          camera={{
+            position: [0, 0, 6],
+            fov: 60,
+          }}
+          gl={{
+            alpha: true,
+            antialias: false,
+            powerPreference: "default",
+          }}
+          dpr={
+            window.innerWidth <= 768
+              ? 1
+              : [1, 1.5]
+          }
+          onCreated={({ gl }) => {
+            gl.domElement.addEventListener(
+              "webglcontextlost",
+              (event) => {
+                event.preventDefault();
+
+                console.warn(
+                  "WebGL context lost. Switching to CSS fallback."
+                );
+
+                setWebglFailed(true);
+              }
+            );
+          }}
+        >
+          <FloatingParticles />
+        </Canvas>
+      )}
     </div>
   );
 }
