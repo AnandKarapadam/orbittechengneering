@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import "../styles/careers.css";
 
 export default function Careers() {
@@ -90,92 +91,95 @@ export default function Careers() {
         </div>
       </div>
 
-      {showModal && (
-        <div className="career-modal-overlay">
-          <div className="career-modal">
-            <button
-              className="career-close-btn"
-              onClick={() => {
-                setShowModal(false);
-                setErrors({});
-              }}
-            >
-              ×
-            </button>
-
-            <h3>Submit Your Profile</h3>
-
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Candidate Name *</label>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      name: e.target.value,
-                    })
-                  }
-                />
-                {errors.name && <span className="error">{errors.name}</span>}
-              </div>
-
-              <div className="form-group">
-                <label>Phone Number *</label>
-                <input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      phone: e.target.value,
-                    })
-                  }
-                />
-                {errors.phone && <span className="error">{errors.phone}</span>}
-              </div>
-
-              <div className="form-group">
-                <label>Resume (PDF)(Optional) *</label>
-                <input
-                  type="file"
-                  accept=".pdf"
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      resume: e.target.files[0],
-                    })
-                  }
-                />
-                {errors.resume && (
-                  <span className="error">{errors.resume}</span>
-                )}
-              </div>
-
-              <div className="form-group">
-                <label>Additional Information (Optional)</label>
-                <textarea
-                  rows="4"
-                  value={formData.message}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      message: e.target.value,
-                    })
-                  }
-                />
-              </div>
-
-              {success && <p className="success-message">{success}</p>}
-
-              <button type="submit" className="submit-btn">
-                Submit Profile
+      {showModal &&
+        createPortal(
+          <div className="career-modal-overlay">
+            <div className="career-modal">
+              <button
+                className="career-close-btn"
+                onClick={() => {
+                  setShowModal(false);
+                  setErrors({});
+                }}
+              >
+                ×
               </button>
-            </form>
-          </div>
-        </div>
-      )}
+
+              <h3>Submit Your Profile</h3>
+
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label>Candidate Name *</label>
+                  <input
+                    type="text"
+                    value={formData.name}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        name: e.target.value,
+                      })
+                    }
+                  />
+                  {errors.name && <span className="error">{errors.name}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label>Phone Number *</label>
+                  <input
+                    type="tel"
+                    value={formData.phone}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        phone: e.target.value,
+                      })
+                    }
+                  />
+                  {errors.phone && <span className="error">{errors.phone}</span>}
+                </div>
+
+                <div className="form-group">
+                  <label>Resume (PDF)(Optional) *</label>
+                  <input
+                    type="file"
+                    accept=".pdf"
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        resume: e.target.files[0],
+                      })
+                    }
+                  />
+                  {errors.resume && (
+                    <span className="error">{errors.resume}</span>
+                  )}
+                </div>
+
+                <div className="form-group">
+                  <label>Additional Information (Optional)</label>
+                  <textarea
+                    rows="3"
+                    value={formData.message}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        message: e.target.value,
+                      })
+                    }
+                  />
+                </div>
+
+                {success && <p className="success-message">{success}</p>}
+
+                <button type="submit" className="submit-btn">
+                  Submit Profile
+                </button>
+              </form>
+            </div>
+          </div>,
+          document.body
+        )}
     </section>
   );
 }
+
