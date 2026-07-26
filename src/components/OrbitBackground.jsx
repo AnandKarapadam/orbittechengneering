@@ -7,14 +7,13 @@ function FloatingParticles() {
   const pointsRef = useRef();
   const mouse = useRef({ x: 0, y: 0 });
 
+  const isMobile =
+    typeof window !== "undefined" &&
+    window.matchMedia("(max-width: 768px)").matches;
+
+  const count = isMobile ? 400 : 1000;
+
   const particles = useMemo(() => {
-    const isMobile =
-      typeof window !== "undefined" &&
-      window.matchMedia("(max-width: 768px)").matches;
-
-    // Keep desktop identical
-    const count = isMobile ? 1000 : 1400;
-
     const positions = new Float32Array(count * 3);
 
     for (let i = 0; i < count; i++) {
@@ -24,7 +23,7 @@ function FloatingParticles() {
     }
 
     return positions;
-  }, []);
+  }, [count]);
 
   useFrame((state) => {
     if (!pointsRef.current) return;
@@ -45,8 +44,7 @@ function FloatingParticles() {
     pointsRef.current.rotation.x = mouse.current.y * 0.08;
     pointsRef.current.rotation.z = mouse.current.x * 0.05;
 
-    const positions =
-      pointsRef.current.geometry.attributes.position.array;
+    const positions = pointsRef.current.geometry.attributes.position.array;
 
     for (let i = 0; i < positions.length; i += 3) {
       positions[i + 1] -= 0.004;
@@ -73,10 +71,10 @@ function FloatingParticles() {
       </bufferGeometry>
 
       <pointsMaterial
-        size={0.025}
+        size={isMobile ? 0.045 : 0.032}
         color="#9fe7ff"
         transparent
-        opacity={0.75}
+        opacity={0.85}
         depthWrite={false}
       />
     </points>
@@ -85,22 +83,17 @@ function FloatingParticles() {
 
 export default function OrbitBackground() {
   const [webglFailed, setWebglFailed] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   useEffect(() => {
     const handleVisibility = () => {
-      if (document.hidden) return;
+      setIsPaused(document.hidden);
     };
 
-    document.addEventListener(
-      "visibilitychange",
-      handleVisibility
-    );
+    document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
-      document.removeEventListener(
-        "visibilitychange",
-        handleVisibility
-      );
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, []);
 
@@ -108,6 +101,7 @@ export default function OrbitBackground() {
     <div className="orbit-background" aria-hidden="true">
       {!webglFailed && (
         <Canvas
+          frameloop={isPaused ? "never" : "always"}
           camera={{
             position: [0, 0, 6],
             fov: 60,
@@ -118,20 +112,18 @@ export default function OrbitBackground() {
             powerPreference: "default",
           }}
           dpr={
-            window.innerWidth <= 768
+            typeof window !== "undefined" && window.innerWidth <= 768
               ? 1
-              : [1, 1.5]
+              : [1, 1.25]
           }
           onCreated={({ gl }) => {
             gl.domElement.addEventListener(
               "webglcontextlost",
               (event) => {
                 event.preventDefault();
-
                 console.warn(
                   "WebGL context lost. Switching to CSS fallback."
                 );
-
                 setWebglFailed(true);
               }
             );
@@ -143,3 +135,5 @@ export default function OrbitBackground() {
     </div>
   );
 }
+
+

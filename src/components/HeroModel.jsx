@@ -15,14 +15,19 @@ export default function HeroModel() {
     const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
     camera.position.set(0, 0.2, 4);
 
+    const isMobile =
+      typeof window !== "undefined" && window.innerWidth <= 768;
+
     const renderer = new THREE.WebGLRenderer({
       alpha: true,
       antialias: false,
-      powerPreference: "high-performance",
+      powerPreference: isMobile ? "low-power" : "default",
     });
 
     renderer.setClearColor(0x000000, 0);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.setPixelRatio(
+      isMobile ? 1.0 : Math.min(window.devicePixelRatio, 1.25)
+    );
     container.appendChild(renderer.domElement);
 
     const ambientLight = new THREE.AmbientLight(0xffffff, 1.8);
@@ -38,6 +43,11 @@ export default function HeroModel() {
 
     let model = null;
     let frameId = null;
+    let isVisible = true;
+    let isTabActive = !document.hidden;
+    let lastRenderTime = 0;
+    const targetFps = isMobile ? 30 : 60;
+    const frameInterval = 1000 / targetFps;
 
     const loader = new GLTFLoader();
 
@@ -65,31 +75,85 @@ export default function HeroModel() {
     const resize = () => {
       const width = container.clientWidth;
       const height = container.clientHeight;
+      if (!width || !height) return;
 
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
     };
 
-    const animate = () => {
-      frameId = requestAnimationFrame(animate);
-
-      if (model) {
-        model.rotation.y += 0.004;
-        model.rotation.x = Math.sin(Date.now() * 0.0005) * 0.06;
+    const stopLoop = () => {
+      if (frameId) {
+        cancelAnimationFrame(frameId);
+        frameId = null;
       }
-
-      renderer.render(scene, camera);
     };
 
-    resize();
-    animate();
+    const animate = (timestamp) => {
+      if (!isVisible || !isTabActive) {
+        stopLoop();
+        return;
+      }
 
+      frameId = requestAnimationFrame(animate);
+
+      const elapsed = timestamp - lastRenderTime;
+
+      if (elapsed > frameInterval) {
+        lastRenderTime = timestamp - (elapsed % frameInterval);
+
+        if (model) {
+          model.rotation.y += 0.004;
+          model.rotation.x = Math.sin(timestamp * 0.0005) * 0.06;
+        }
+
+        renderer.render(scene, camera);
+      }
+    };
+
+    const startLoop = () => {
+      if (!frameId && isVisible && isTabActive) {
+        lastRenderTime = performance.now();
+        frameId = requestAnimationFrame(animate);
+      }
+    };
+
+    // IntersectionObserver to pause loop when scrolled offscreen
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        isVisible = entry.isIntersecting;
+        if (isVisible) {
+          startLoop();
+        } else {
+          stopLoop();
+        }
+      },
+      { threshold: 0.05 }
+    );
+
+    observer.observe(container);
+
+    const handleVisibilityChange = () => {
+      isTabActive = !document.hidden;
+      if (isTabActive) {
+        startLoop();
+      } else {
+        stopLoop();
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
     window.addEventListener("resize", resize);
+
+    resize();
+    startLoop();
 
     return () => {
       window.removeEventListener("resize", resize);
-      cancelAnimationFrame(frameId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      observer.disconnect();
+      stopLoop();
 
       if (model) {
         model.traverse((child) => {
@@ -111,4 +175,4 @@ export default function HeroModel() {
   }, []);
 
   return <div ref={canvasRef} className="hero-canvas" />;
-}
+}

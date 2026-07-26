@@ -120,6 +120,14 @@
     radial-gradient(circle, rgba(255, 255, 255, 0.08), transparent 48%);
   filter: blur(26px);
   pointer-events: none;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+@media (max-width: 768px) {
+  .hero-glow {
+    filter: blur(14px);
+  }
 }
 
 .hero-canvas {
@@ -300,3 +308,4 @@
     padding: 0.62rem 0.35rem;
   }
 }
+
