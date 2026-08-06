@@ -4,7 +4,7 @@ import { gsap } from "gsap";
 import HeroModel from "./HeroModel";
 import "../styles/hero.css";
 
-export default function Hero() {
+export default function Hero({ onProgress, onLoaded }) {
   const heroRef = useRef(null);
 
   useEffect(() => {
@@ -48,7 +48,7 @@ export default function Hero() {
 
       <div className="hero-visual" aria-hidden="true">
         <div className="hero-glow"></div>
-        <HeroModel />
+        <HeroModel onProgress={onProgress} onLoaded={onLoaded} />
       </div>
     </section>
   );

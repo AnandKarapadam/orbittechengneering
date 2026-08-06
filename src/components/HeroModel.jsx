@@ -3,7 +3,7 @@ import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-export default function HeroModel() {
+export default function HeroModel({ onProgress, onLoaded }) {
   const canvasRef = useRef(null);
 
   useEffect(() => {
@@ -51,26 +51,42 @@ export default function HeroModel() {
 
     const loader = new GLTFLoader();
 
-    loader.load("/model/airports_around_the_world.glb", (gltf) => {
-      model = gltf.scene;
+    loader.load(
+      "/model/airports_around_the_world.glb",
+      (gltf) => {
+        model = gltf.scene;
 
-      model.traverse((child) => {
-        if (child.isMesh) {
-          child.frustumCulled = true;
+        model.traverse((child) => {
+          if (child.isMesh) {
+            child.frustumCulled = true;
+          }
+        });
+
+        const box = new THREE.Box3().setFromObject(model);
+        const size = box.getSize(new THREE.Vector3());
+        const center = box.getCenter(new THREE.Vector3());
+        const maxAxis = Math.max(size.x, size.y, size.z);
+        const scale = 2.35 / maxAxis;
+
+        model.scale.setScalar(scale);
+        model.position.sub(center.multiplyScalar(scale));
+
+        scene.add(model);
+        if (onProgress) onProgress(100);
+        if (onLoaded) onLoaded();
+      },
+      (xhr) => {
+        if (xhr.lengthComputable && xhr.total > 0) {
+          const percent = (xhr.loaded / xhr.total) * 100;
+          if (onProgress) onProgress(percent);
         }
-      });
-
-      const box = new THREE.Box3().setFromObject(model);
-      const size = box.getSize(new THREE.Vector3());
-      const center = box.getCenter(new THREE.Vector3());
-      const maxAxis = Math.max(size.x, size.y, size.z);
-      const scale = 2.35 / maxAxis;
-
-      model.scale.setScalar(scale);
-      model.position.sub(center.multiplyScalar(scale));
-
-      scene.add(model);
-    });
+      },
+      (error) => {
+        console.error("Error loading model:", error);
+        if (onProgress) onProgress(100);
+        if (onLoaded) onLoaded();
+      }
+    );
 
     const resize = () => {
       const width = container.clientWidth;

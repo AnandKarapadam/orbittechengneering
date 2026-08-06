@@ -1,5 +1,5 @@
 // src/App.jsx
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
 import Services from "./components/Services";
@@ -7,6 +7,7 @@ import Careers from "./components/Careers";
 import About from "./components/About";
 import ContactForm from "./components/ContactForm";
 import OrbitBackground from "./components/OrbitBackground";
+import Preloader from "./components/Preloader";
 import "./App.css";
 import { gsap } from "gsap";
 import ScrollTrigger from "gsap/ScrollTrigger";
@@ -18,6 +19,33 @@ import Footer from "./components/Footer";
 gsap.registerPlugin(ScrollTrigger);
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+
+  const handleProgress = useCallback((val) => {
+    setProgress((prev) => Math.max(prev, val));
+  }, []);
+
+  const handleLoaded = useCallback(() => {
+    setProgress(100);
+    setTimeout(() => {
+      setIsLoading(false);
+      ScrollTrigger.refresh();
+    }, 300);
+  }, []);
+
+  useEffect(() => {
+    if (isLoading) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isLoading]);
+
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.utils.toArray("[data-fade]").forEach((el) => {
@@ -55,12 +83,13 @@ function App() {
 
   return (
     <div className="app">
+      <Preloader progress={progress} isLoading={isLoading} />
       <OrbitBackground />
       <Navbar />
 
       <main className="page-content">
         <div data-fade>
-          <Hero />
+          <Hero onProgress={handleProgress} onLoaded={handleLoaded} />
         </div>
         <div data-fade>
           <Services />
