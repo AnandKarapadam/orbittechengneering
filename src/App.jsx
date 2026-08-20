@@ -84,32 +84,34 @@ function App() {
   return (
     <div className="app">
       <Preloader progress={progress} isLoading={isLoading} />
-      <OrbitBackground />
-      <Navbar />
+      <div style={{ opacity: isLoading ? 0 : 1, transition: "opacity 0.5s ease" }}>
+        <OrbitBackground />
+        <Navbar />
 
-      <main className="page-content">
-        <div data-fade>
-          <Hero onProgress={handleProgress} onLoaded={handleLoaded} />
-        </div>
-        <div data-fade>
-          <Services />
-        </div>
-        <div data-fade>
-          <About />
-        </div>
-        <div data-fade>
-          <Owner />
-        </div>
-        <div data-fade>
-          <Careers />
-        </div>
-        <div data-fade>
-          <ContactForm />
-        </div>
-        
-      </main>
-      <ToastContainer position="top-right" autoClose={3000} theme="dark" />
-      <Footer/>
+        <main className="page-content">
+          <div data-fade>
+            <Hero onProgress={handleProgress} onLoaded={handleLoaded} />
+          </div>
+          <div data-fade>
+            <Services />
+          </div>
+          <div data-fade>
+            <About />
+          </div>
+          <div data-fade>
+            <Owner />
+          </div>
+          <div data-fade>
+            <Careers />
+          </div>
+          <div data-fade>
+            <ContactForm />
+          </div>
+          
+        </main>
+        <ToastContainer position="top-right" autoClose={3000} theme="dark" />
+        <Footer/>
+      </div>
     </div>
   );
 }
